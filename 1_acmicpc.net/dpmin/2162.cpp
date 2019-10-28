@@ -9,13 +9,13 @@ typedef struct {
 bool operator < (Point &p1, Point &p2) {
     if (p1.x < p2.x) return true;
     else if (p1.x == p2.x && p1.y < p2.y) return true;
-    
+
     return false;
 }
 
 bool operator <= (Point &p1, Point &p2) {
     if (p1.x == p2.x && p1.y == p2.y) return true;
-    
+
     return p1 < p2;
 }
 
@@ -32,17 +32,20 @@ typedef struct {
 
 int ccw(Point &p1, Point &p2, Point &p3) {
     // return positive when p1->p2->p3 is ccw (otherwise, return negative if it is cw)
-    return p1.x*p2.y + p2.x*p3.y + p3.x*p1.y - p1.y*p2.x - p2.y*p3.x - p3.y*p1.x;
+    int ret = p1.x*p2.y + p2.x*p3.y + p3.x*p1.y - p1.y*p2.x - p2.y*p3.x - p3.y*p1.x;
+
+    if (ret) return ret > 0 ? 1 : -1;
+    return 0;
 }
 
 bool isIntersect(Line &l1, Line &l2) {
     int L1L2 = ccw(l1.p1, l1.p2, l2.p1) * ccw(l1.p1, l1.p2, l2.p2);
     int L2L1 = ccw(l2.p1, l2.p2, l1.p1) * ccw(l2.p1, l2.p2, l1.p2);
-    
+
     if (L1L2 == 0 && L2L1 == 0) {
         if (l1.p2 < l1.p1) swap(l1.p2, l1.p1);
         if (l2.p2 < l2.p1) swap(l2.p2, l2.p1);
-        
+
         return l1.p1 <= l2.p2 && l2.p1 <= l1.p2;
     }
 
