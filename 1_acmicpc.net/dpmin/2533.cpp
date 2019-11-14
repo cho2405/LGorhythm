@@ -4,20 +4,24 @@
 using namespace std;
 
 typedef struct {
-    bool visit;
+    bool visit, pick;
     list<int> friends;
 } Node;
 
 int N;
 Node node[1000001];
-int even_odd_Sum[2]; //0: Even, 1: Odd
 
-void travel(int n, int level) {
+int travel(int n) {
     node[n].visit = true;
-    even_odd_Sum[level%2]++;
 
+    int ret = 0;
     for (auto it = node[n].friends.begin(); it != node[n].friends.end(); it++)
-        if (!node[*it].visit) travel(*it, level+1);
+        if (!node[*it].visit) {
+            ret += travel(*it);
+            if (!node[*it].pick) node[n].pick = true;
+        }
+
+    return ret + (node[n].pick ? 1 : 0);
 }
 
 int main(void) {
@@ -27,15 +31,13 @@ int main(void) {
         int u, v;
         cin >> u >> v;
 
-        node[u].visit = false;
-        node[v].visit = false;
+        node[u].visit = false; node[v].visit = false;
+        node[u].pick  = false; node[v].pick  = false;
         node[u].friends.push_back(v);
         node[v].friends.push_back(u);
     }
 
-    travel(1, 1);
-
-    cout << min(even_odd_Sum[0], even_odd_Sum[1]) << endl;
+    cout << travel(1) << endl;
 
     return 0;
 }
